@@ -1,0 +1,82 @@
+{% extends 'base.html' %}
+{% load static %}  <!-- ✅ Load the static template tag -->
+
+{% block title %}Home - Video Library{% endblock %}
+
+{% block content %}
+    <!-- Hero Section -->
+    <section class="hero bg-primary text-white text-center py-5">
+        <div class="container">
+            <h1 class="display-4">Welcome to the Video Library</h1>
+            <p class="lead">Explore and discover an amazing collection of videos. Enjoy unlimited access to your favorite content!</p>
+            <a href="{% url 'browse' %}" class="btn btn-light btn-lg">Browse Videos</a>
+        </div>
+    </section>
+
+    <!-- Featured Categories -->
+    <section class="categories py-5">
+        <div class="container">
+            <h2 class="text-center mb-4">Featured Categories</h2>
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="category-card bg-light p-4 text-center">
+                        <img src="{% static 'images/category1.jpg' %}" class="img-fluid mb-3" alt="Category 1">
+                        <h4>Category 1</h4>
+                        <p>Explore videos in this exciting category.</p>
+                        <a href="#" class="btn btn-primary">Browse</a>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="category-card bg-light p-4 text-center">
+                        <img src="{% static 'images/category2.jpg' %}" class="img-fluid mb-3" alt="Category 2">
+                        <h4>Category 2</h4>
+                        <p>Discover content that sparks your interest.</p>
+                        <a href="#" class="btn btn-primary">Browse</a>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="category-card bg-light p-4 text-center">
+                        <img src="{% static 'images/category3.jpg' %}" class="img-fluid mb-3" alt="Category 3">
+                        <h4>Category 3</h4>
+                        <p>Watch hand-picked videos in this category.</p>
+                        <a href="#" class="btn btn-primary">Browse</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Popular Videos -->
+    <section class="popular-videos bg-light py-5">
+        <div class="container">
+            <h2 class="text-center mb-4">Popular Videos</h2>
+            <div class="row">
+                <!-- Example video card, repeat as needed -->
+                <div class="col-md-4">
+                    <div class="video-card bg-white p-3 text-center shadow-sm">
+                        <img src="{% static 'images/video1.jpg' %}" class="img-fluid mb-3" alt="Video 1">
+                        <h5>Video Title 1</h5>
+                        <p>Short description about this video.</p>
+                        <a href="#" class="btn btn-primary">Watch Now</a>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="video-card bg-white p-3 text-center shadow-sm">
+                        <img src="{% static 'images/video2.jpg' %}" class="img-fluid mb-3" alt="Video 2">
+                        <h5>Video Title 2</h5>
+                        <p>Short description about this video.</p>
+                        <a href="#" class="btn btn-primary">Watch Now</a>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="video-card bg-white p-3 text-center shadow-sm">
+                        <img src="{% static 'images/video3.jpg' %}" class="img-fluid mb-3" alt="Video 3">
+                        <h5>Video Title 3</h5>
+                        <p>Short description about this video.</p>
+                        <a href="#" class="btn btn-primary">Watch Now</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock %}

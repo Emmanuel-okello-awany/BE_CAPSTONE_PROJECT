@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+{% block title %}Register{% endblock %}
+{% block content %}
+<div class="card shadow-sm p-4">
+    <h2 class="text-center">Create an Account</h2>
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="mb-3">
+            <label>Email:</label>
+            <input type="email" name="email" class="form-control" placeholder="Enter email" required>
+        </div>
+        <div class="mb-3">
+            <label>Username:</label>
+            <input type="text" name="username" class="form-control" placeholder="Enter username" required>
+        </div>
+        <div class="mb-3">
+            <label>Profile Picture:</label>
+            <input type="file" name="profile_picture" class="form-control">
+        </div>
+        <div class="mb-3">
+            <label>Password:</label>
+            <input type="password" name="password" class="form-control" placeholder="Enter password" required>
+        </div>
+        <button type="submit" class="btn btn-primary w-100">Register</button>
+    </form>
+    <p class="text-center mt-3">Already have an account? <a href="{% url 'login' %}">Login</a></p>
+</div>
+{% endblock %}

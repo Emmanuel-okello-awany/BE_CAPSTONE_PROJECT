@@ -1,58 +1,65 @@
-{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}User App{% endblock %}</title>
+    <title>{% block title %}Video Library{% endblock %}</title>
+    {% load static %}
     
-    <!-- Bootstrap CDN (Optional) -->
+    <!-- Favicon -->
+    <link rel="icon" href="{% static 'images/favicon.ico' %}" type="image/x-icon">
+    
+    <!-- Bootstrap CSS (For Modern Styling) -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
     
     <!-- Custom CSS -->
-    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
 </head>
-<body>
+<body class="{% block body_class %}{% endblock %}">
 
-    <!-- Navbar -->
+    <!-- 🌟 Navbar -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
         <div class="container">
-            <a class="navbar-brand" href="{% url 'home' %}">Video Library</a>
+            <a class="navbar-brand" href="{% url 'home' %}">🎥 VideoLibrary</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a class="nav-link" href="{% url 'browse' %}">Browse</a></li>
+                    
                     {% if user.is_authenticated %}
-                        <li class="nav-item">
-                            <a class="nav-link" href="{% url 'profile' %}">Profile</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="{% url 'logout' %}">Logout</a>
-                        </li>
+                        <li class="nav-item"><a class="nav-link" href="{% url 'upload_video' %}">Upload</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{% url 'logout' %}">Logout</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{% url 'profile' %}">👤 {{ user.username }}</a></li>
                     {% else %}
-                        <li class="nav-item">
-                            <a class="nav-link" href="{% url 'login' %}">Login</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="{% url 'register' %}">Register</a>
-                        </li>
+                        <li class="nav-item"><a class="nav-link" href="{% url 'login' %}">Login</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{% url 'register' %}">Sign Up</a></li>
                     {% endif %}
+                    
+                    <!-- Dark Mode Toggle -->
+                    <li class="nav-item">
+                        <button id="theme-toggle" class="btn btn-outline-light ms-2">🌙 Dark Mode</button>
+                    </li>
                 </ul>
             </div>
         </div>
     </nav>
 
-    <!-- Main Content -->
-    <div class="container mt-4">
+    <!-- 🌟 Main Content -->
+    <main class="container my-4">
         {% block content %}{% endblock %}
-    </div>
+    </main>
 
-    <!-- Bootstrap JS (Optional) -->
+    <!-- 🌟 Footer -->
+    <footer class="footer bg-dark text-white text-center py-3">
+        <p>&copy; 2025 VideoLibrary. All rights reserved.</p>
+    </footer>
+
+    <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    
+
     <!-- Custom JavaScript -->
     <script src="{% static 'js/script.js' %}"></script>
-
 </body>
 </html>

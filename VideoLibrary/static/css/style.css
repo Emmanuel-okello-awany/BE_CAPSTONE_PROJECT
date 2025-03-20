@@ -1,0 +1,44 @@
+/* 🌟 Hero Section */
+.hero {
+    background: url('/static/images/hero-bg.jpg') no-repeat center center/cover;
+    padding: 100px 0;
+}
+
+/* 🌟 Search Bar */
+.search-bar .form-control {
+    border-radius: 50px 0 0 50px;
+    padding: 10px 20px;
+}
+.search-bar .btn {
+    border-radius: 0 50px 50px 0;
+}
+
+/* 🌟 Video Gallery */
+.video-gallery {
+    background-color: #f8f9fa;
+    padding: 50px 0;
+}
+
+/* 🌟 Video Card */
+.video-card {
+    background: #fff;
+    border-radius: 10px;
+    overflow: hidden;
+    transition: transform 0.2s;
+}
+.video-card:hover {
+    transform: scale(1.05);
+}
+.video-thumbnail img {
+    width: 100%;
+    height: 180px;
+    object-fit: cover;
+}
+.video-info h5 {
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+.video-info p {
+    font-size: 14px;
+    color: #6c757d;
+}

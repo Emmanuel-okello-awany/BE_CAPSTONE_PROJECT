@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Browse Videos{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2 class="text-center mb-4">Explore Videos</h2>
+    
+    <div class="row">
+        {% for video in page_obj %}
+        <div class="col-md-4 mb-4">
+            <div class="card shadow-sm">
+                <a href="{% url 'video_detail' video.id %}">
+                    <img src="{{ video.thumbnail.url }}" class="card-img-top" alt="{{ video.title }}">
+                </a>
+                <div class="card-body">
+                    <h5 class="card-title">{{ video.title }}</h5>
+                    <p class="text-muted">{{ video.uploaded_at|date:"M d, Y" }}</p>
+                    <p class="card-text">{{ video.description|truncatewords:15 }}</p>
+                    <p><strong>Views:</strong> {{ video.views }}</p>
+                    <a href="{% url 'video_detail' video.id %}" class="btn btn-primary w-100">Watch Now</a>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <p class="text-center">No videos uploaded yet.</p>
+        {% endfor %}
+    </div>
+
+    <!-- Pagination -->
+    <nav class="d-flex justify-content-center">
+        <ul class="pagination">
+            {% if page_obj.has_previous %}
+            <li class="page-item"><a class="page-link" href="?page=1">First</a></li>
+            <li class="page-item"><a class="page-link" href="?page={{ page_obj.previous_page_number }}">Previous</a></li>
+            {% endif %}
+            <li class="page-item disabled"><a class="page-link">Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</a></li>
+            {% if page_obj.has_next %}
+            <li class="page-item"><a class="page-link" href="?page={{ page_obj.next_page_number }}">Next</a></li>
+            <li class="page-item"><a class="page-link" href="?page={{ page_obj.paginator.num_pages }}">Last</a></li>
+            {% endif %}
+        </ul>
+    </nav>
+</div>
+{% endblock %}

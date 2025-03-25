@@ -1,0 +1,98 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}{{ video.title }}{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2 class="mb-3">{{ video.title }}</h2>
+
+    <!-- Video Player -->
+    <div class="video-container">
+        <video width="100%" controls>
+            <source src="{{ video.video_file.url }}" type="video/mp4">
+            Your browser does not support the video tag.
+        </video>
+    </div>
+
+    <!-- Video Details -->
+    <div class="mt-3 d-flex justify-content-between align-items-center">
+        <div>
+            <p><strong>Uploaded on:</strong> {{ video.uploaded_at|date:"M d, Y" }}</p>
+            <p><strong>Views:</strong> {{ video.views }}</p>
+            <p><strong>Description:</strong> {{ video.description }}</p>
+        </div>
+    </div>
+
+    <hr>
+
+    <!-- Comments Section -->
+    <h4 class="mb-3">{{ video.comments.count }} Comments</h4>
+
+    <!-- Sorting Options -->
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <a href="?sort=newest" class="btn btn-sm btn-outline-secondary {% if sort_by == 'newest' %}active{% endif %}">Newest</a>
+        <a href="?sort=top" class="btn btn-sm btn-outline-secondary {% if sort_by == 'top' %}active{% endif %}">Top Comments</a>
+    </div>
+
+    <!-- Comment Form -->
+    {% if user.is_authenticated %}
+        <form action="{% url 'add_comment' video.id %}" method="POST" class="mb-4">
+            {% csrf_token %}
+            <div class="form-group">
+                <textarea name="text" class="form-control" rows="3" placeholder="Write a comment..." required></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary">Comment</button>
+        </form>
+    {% else %}
+        <p><a href="{% url 'login' %}">Login</a> to comment.</p>
+    {% endif %}
+
+    <hr>
+
+    <!-- Comments List -->
+    <div id="comments-section">
+        {% for comment in comments %}
+            <div class="comment mb-4">
+                <div class="d-flex align-items-start">
+                    <img src="{% static 'images/user-avatar.png' %}" class="rounded-circle me-2" width="40" height="40" alt="User">
+                    <div>
+                        <strong>{{ comment.user.username }}</strong> <small class="text-muted">{{ comment.created_at|timesince }} ago</small>
+                        <p>{{ comment.text }}</p>
+                        <button class="btn btn-sm btn-outline-primary like-btn" data-id="{{ comment.id }}">👍 {{ comment.total_likes }}</button>
+                        <button class="btn btn-sm btn-outline-danger dislike-btn" data-id="{{ comment.id }}">👎 {{ comment.total_dislikes }}</button>
+                        <button class="btn btn-sm btn-outline-secondary reply-btn" data-id="{{ comment.id }}">Reply</button>
+
+                        <!-- Reply Form (Initially Hidden) -->
+                        <form action="{% url 'add_comment' video.id %}" method="POST" class="reply-form mt-2 d-none" id="reply-form-{{ comment.id }}">
+                            {% csrf_token %}
+                            <input type="hidden" name="parent_id" value="{{ comment.id }}">
+                            <textarea name="text" class="form-control" rows="2" required></textarea>
+                            <button type="submit" class="btn btn-sm btn-primary mt-2">Reply</button>
+                        </form>
+
+                        <!-- Display Replies -->
+                        {% for reply in comment.replies.all %}
+                            <div class="reply ms-5 mt-2">
+                                <strong>{{ reply.user.username }}</strong> <small class="text-muted">{{ reply.created_at|timesince }} ago</small>
+                                <p>{{ reply.text }}</p>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        {% empty %}
+            <p>No comments yet. Be the first to comment!</p>
+        {% endfor %}
+    </div>
+</div>
+
+<script>
+    document.querySelectorAll(".reply-btn").forEach(btn => {
+        btn.addEventListener("click", function() {
+            document.getElementById("reply-form-" + this.dataset.id).classList.toggle("d-none");
+        });
+    });
+</script>
+
+{% endblock %}

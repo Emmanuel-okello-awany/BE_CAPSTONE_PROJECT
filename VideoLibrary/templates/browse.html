@@ -24,21 +24,26 @@
             <a href="{% url 'browse' %}?category=Education" class="btn btn-outline-secondary">Education</a>
         </div>
 
+        <!-- Search Result Message -->
+        {% if request.GET.q %}
+            <h4 class="col-12">Search Results for "{{ request.GET.q }}"</h4>
+        {% endif %}
+
         <!-- Video Grid -->
         <div class="row">
             {% for video in videos %}
-            <div class="col-md-4 mb-4">
-                <div class="video-card card shadow-sm">
-                    <img src="{{ video.thumbnail.url }}" class="card-img-top" alt="{{ video.title }}">
-                    <div class="card-body">
-                        <h5 class="card-title">{{ video.title }}</h5>
-                        <p class="card-text text-muted">{{ video.description|truncatewords:15 }}</p>
-                        <a href="{% url 'video_detail' video.id %}" class="btn btn-primary">Watch Now</a>
+                <div class="col-md-4 mb-4">
+                    <div class="video-card card shadow-sm">
+                        <img src="{{ video.thumbnail.url }}" class="card-img-top" alt="{{ video.title }}">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ video.title }}</h5>
+                            <p class="card-text text-muted">{{ video.description|truncatewords:15 }}</p>
+                            <a href="{% url 'video_detail' video.id %}" class="btn btn-primary">Watch Now</a>
+                        </div>
                     </div>
                 </div>
-            </div>
             {% empty %}
-            <p class="text-center">No videos found.</p>
+                <p class="text-center col-12">No videos found. Try a different search term or filter by category.</p>
             {% endfor %}
         </div>
     </div>

@@ -10,42 +10,139 @@
 
         <!-- Search Bar -->
         <div class="search-bar mb-4">
-            <form method="GET" action="{% url 'browse' %}" class="d-flex">
-                <input type="text" name="q" class="form-control me-2" placeholder="Search videos..." value="{{ request.GET.q }}">
+            <form method="GET" action="{% url 'browse' %}" class="d-flex justify-content-center">
+                <input type="text" id="searchInput" name="q" class="form-control me-2" placeholder="Search videos..." value="{{ request.GET.q }}" onkeyup="liveSearch()">
                 <button type="submit" class="btn btn-primary">Search</button>
             </form>
         </div>
 
         <!-- Filter Options -->
         <div class="filters mb-4 text-center">
-            <a href="{% url 'browse' %}" class="btn btn-outline-secondary">All</a>
-            <a href="{% url 'browse' %}?category=Music" class="btn btn-outline-secondary">Music</a>
-            <a href="{% url 'browse' %}?category=Sports" class="btn btn-outline-secondary">Sports</a>
-            <a href="{% url 'browse' %}?category=Education" class="btn btn-outline-secondary">Education</a>
+            <a href="{% url 'browse' %}" class="btn btn-outline-secondary {% if not selected_category %} active{% endif %}">All</a>
+            {% for category in categories %}
+                <a href="{% url 'browse' %}?category={{ category }}" class="btn btn-outline-secondary {% if selected_category == category %} active{% endif %}">{{ category }}</a>
+            {% endfor %}
         </div>
 
-        <!-- Search Result Message -->
-        {% if request.GET.q %}
-            <h4 class="col-12">Search Results for "{{ request.GET.q }}"</h4>
-        {% endif %}
+        <!-- Live Search Results -->
+        <div id="searchResults" class="mt-3"></div>
 
-        <!-- Video Grid -->
-        <div class="row">
-            {% for video in videos %}
-                <div class="col-md-4 mb-4">
-                    <div class="video-card card shadow-sm">
-                        <img src="{{ video.thumbnail.url }}" class="card-img-top" alt="{{ video.title }}">
-                        <div class="card-body">
-                            <h5 class="card-title">{{ video.title }}</h5>
-                            <p class="card-text text-muted">{{ video.description|truncatewords:15 }}</p>
-                            <a href="{% url 'video_detail' video.id %}" class="btn btn-primary">Watch Now</a>
+        <!-- Default Video Grid -->
+        <div id="allVideos">
+            {% if request.GET.q %}
+                <h4 class="col-12 text-center mb-4">Search Results for "{{ request.GET.q }}"</h4>
+            {% endif %}
+
+            <div class="video-grid row">
+                {% for video in page_obj %}
+                    <div class="col-md-4 mb-4">
+                        <div class="video-card card shadow-sm">
+                            <a href="{{ video.get_absolute_url }}">
+                                <img src="{{ video.thumbnail.url }}" class="card-img-top video-thumbnail" alt="{{ video.title }}"
+                                     onerror="this.onerror=null;this.src='{% static 'images/default-thumbnail.jpg' %}';">
+                            </a>
+                            <div class="card-body">
+                                <h5 class="card-title">{{ video.title }}</h5>
+                                <p class="text-muted">{{ video.uploaded_at }}</p>
+                                <p>{{ video.description|truncatewords:15 }}</p>
+                                <a href="{{ video.get_absolute_url }}" class="btn btn-primary w-100">Watch Now</a>
+                            </div>
                         </div>
                     </div>
-                </div>
-            {% empty %}
-                <p class="text-center col-12">No videos found. Try a different search term or filter by category.</p>
-            {% endfor %}
+                {% empty %}
+                    <div class="col-12 text-center">
+                        <p>No videos found in this category.</p>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Pagination -->
+        <div class="pagination d-flex justify-content-center mt-4">
+            {% if page_obj.has_previous %}
+                <a href="?page=1{% if selected_category %}&category={{ selected_category }}{% endif %}" class="btn btn-sm btn-outline-secondary">First</a>
+                <a href="?page={{ page_obj.previous_page_number }}{% if selected_category %}&category={{ selected_category }}{% endif %}" class="btn btn-sm btn-outline-secondary">Previous</a>
+            {% endif %}
+
+            <span class="current-page mx-3">Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>
+
+            {% if page_obj.has_next %}
+                <a href="?page={{ page_obj.next_page_number }}{% if selected_category %}&category={{ selected_category }}{% endif %}" class="btn btn-sm btn-outline-secondary">Next</a>
+                <a href="?page={{ page_obj.paginator.num_pages }}{% if selected_category %}&category={{ selected_category }}{% endif %}" class="btn btn-sm btn-outline-secondary">Last</a>
+            {% endif %}
         </div>
     </div>
 </section>
+
+<!-- JavaScript for Live Search -->
+<script>
+    function liveSearch() {
+        let query = document.getElementById('searchInput').value;
+        let searchResultsDiv = document.getElementById('searchResults');
+        let allVideosDiv = document.getElementById('allVideos');
+
+        if (query.length < 1) {
+            searchResultsDiv.innerHTML = "";  // Clear search results
+            allVideosDiv.style.display = "block"; // Show all videos
+            return;
+        }
+
+        fetch(`/search/api/?q=${query}`)
+        .then(response => response.json())
+        .then(data => {
+            let resultsHtml = "";
+            if (data.results.length > 0) {
+                data.results.forEach(video => {
+                    resultsHtml += `
+                        <div class="card mb-3">
+                            <a href="/videos/${video.id}/">
+                                <img src="${video.thumbnail}" class="card-img-top" alt="${video.title}" 
+                                    onerror="this.onerror=null;this.src='{% static 'images/default-thumbnail.jpg' %}';">
+                            </a>
+                            <div class="card-body">
+                                <h5 class="card-title">${video.title}</h5>
+                                <p class="text-muted">${video.uploaded_at}</p>
+                                <p>${video.description.substring(0, 100)}...</p>
+                            </div>
+                        </div>
+                    `;
+                });
+            } else {
+                resultsHtml = "<p class='text-center'>No results found.</p>";
+            }
+
+            searchResultsDiv.innerHTML = resultsHtml;
+            allVideosDiv.style.display = "none";  // Hide default videos when searching
+        });
+    }
+</script>
+
+<!-- Custom Styles -->
+<style>
+    .video-thumbnail {
+        height: 200px;
+        object-fit: cover;
+    }
+
+    .btn-outline-secondary.active {
+        background-color: #007bff;
+        color: white;
+    }
+
+    .pagination .page-item .page-link {
+        font-weight: bold;
+    }
+
+    .video-grid {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+
+    .video-card {
+        width: 100%;
+        max-width: 350px;
+        margin: auto;
+    }
+</style>
 {% endblock %}

@@ -13,7 +13,6 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 from pathlib import Path
 import os
 
-# Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
@@ -23,7 +22,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'django-insecure-#y^q0ebxxa&+e*2hru6x(#78bzq&g%o3(3rch1d2a_!@aat3!6'
 
-# SECURITY WARNING: don't run with debug turned on in production!
+
 DEBUG = True
 
 ALLOWED_HOSTS = []
@@ -93,7 +92,7 @@ DATABASES = {
 }
 
 
-#tells django to use the custom user model
+
 AUTH_USER_MODEL = 'users.CustomUser'
 
 
@@ -139,16 +138,16 @@ STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 STATICFILES_DIRS = [
-    BASE_DIR / "static",  # Add the static directory of your project
+    BASE_DIR / "static",  
 ]
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework.authentication.TokenAuthentication',
-        'rest_framework.authentication.SessionAuthentication',  # Optional for browser login
+        'rest_framework.authentication.SessionAuthentication',  
     ],
     'DEFAULT_PERMISSION_CLASSES': [
-        'rest_framework.permissions.IsAuthenticated',  # Restrict access by default
+        'rest_framework.permissions.IsAuthenticated',  
     ],
 }
 

@@ -34,14 +34,35 @@ def watch_video(request, video_id):
     video.increment_views()  # Increase views count
     return render(request, "video/watch_video.html", {"video": video})
 
+from django.core.paginator import Paginator
+from django.shortcuts import render
+from .models import Video
+
 def browse_videos(request):
-    """Display all uploaded videos in a grid format with pagination."""
+    """Display all uploaded videos in a grid format with pagination and category filtering."""
+    
+    # Extract predefined categories from the model choices
+    categories = [choice[0] for choice in Video._meta.get_field('category').choices]
+
+    # Get selected category from request
+    category_filter = request.GET.get('category')
+    
+    # Fetch videos and apply category filter if selected
     videos = Video.objects.all().order_by('-uploaded_at')
-    paginator = Paginator(videos, 9)  # Show 9 videos per page
+    if category_filter and category_filter in categories:
+        videos = videos.filter(category=category_filter)
+
+    # Implement pagination (9 videos per page)
+    paginator = Paginator(videos, 9)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
 
-    return render(request, 'video/browse.html', {'page_obj': page_obj})
+    return render(request, 'video/browse.html', {
+        'page_obj': page_obj,
+        'categories': categories,
+        'selected_category': category_filter  # Pass selected category for highlighting
+    })
+
 
 
 @login_required  

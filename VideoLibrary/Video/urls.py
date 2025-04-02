@@ -11,7 +11,9 @@ urlpatterns = [
     path('upload/', upload_video, name='upload_video'),
     path('delete/<int:video_id>/', delete_video, name='delete_video'),
     path('browse/', browse_videos, name='browse_videos'),
-     path("videos/<int:video_id>/", watch_video, name="watch_video"),
+    path("videos/<int:video_id>/", watch_video, name="watch_video"),
+    path('videos/<slug:slug>/', video_detail, name='video_detail'),
+
 
     # API views
     path('api/videos/', VideoListCreateAPI.as_view(), name='video-list-api'),

@@ -37,7 +37,7 @@ def login_view(request):
             user = authenticate(request, email=email, password=password)
             if user:
                 login(request, user)
-                return redirect('home')  # Redirect to a dashboard/home page
+                return redirect('home')  
     else:
         form = UserLoginForm()
     return render(request, 'users/login.html', {'form': form})

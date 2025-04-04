@@ -15,12 +15,22 @@
         </video>
     </div>
 
-    <!-- Video Details -->
+    <!-- Video Details & Reactions -->
     <div class="mt-3 d-flex justify-content-between align-items-center">
         <div>
             <p><strong>Uploaded on:</strong> {{ video.uploaded_at|date:"M d, Y" }}</p>
             <p><strong>Views:</strong> {{ video.views }}</p>
             <p><strong>Description:</strong> {{ video.description }}</p>
+        </div>
+        
+        <!-- Video Like & Dislike Buttons -->
+        <div class="video-reactions">
+            <button class="btn btn-outline-primary video-like-btn" data-video-id="{{ video.id }}">
+                👍 Like (<span id="video-like-count">{{ video.likes_count }}</span>)
+            </button>
+            <button class="btn btn-outline-danger video-dislike-btn" data-video-id="{{ video.id }}">
+                👎 Dislike (<span id="video-dislike-count">{{ video.dislikes_count }}</span>)
+            </button>
         </div>
     </div>
 
@@ -59,8 +69,8 @@
                     <div>
                         <strong>{{ comment.user.username }}</strong> <small class="text-muted">{{ comment.created_at|timesince }} ago</small>
                         <p>{{ comment.text }}</p>
-                        <button class="btn btn-sm btn-outline-primary like-btn" data-id="{{ comment.id }}">👍 {{ comment.total_likes }}</button>
-                        <button class="btn btn-sm btn-outline-danger dislike-btn" data-id="{{ comment.id }}">👎 {{ comment.total_dislikes }}</button>
+                        <button class="btn btn-sm btn-outline-primary like-btn" data-id="{{ comment.id }}">👍 <span id="like-count-{{ comment.id }}">{{ comment.total_likes }}</span></button>
+                        <button class="btn btn-sm btn-outline-danger dislike-btn" data-id="{{ comment.id }}">👎 <span id="dislike-count-{{ comment.id }}">{{ comment.total_dislikes }}</span></button>
                         <button class="btn btn-sm btn-outline-secondary reply-btn" data-id="{{ comment.id }}">Reply</button>
 
                         <!-- Reply Form (Initially Hidden) -->
@@ -88,9 +98,80 @@
 </div>
 
 <script>
+    // Toggle reply form visibility
     document.querySelectorAll(".reply-btn").forEach(btn => {
         btn.addEventListener("click", function() {
             document.getElementById("reply-form-" + this.dataset.id).classList.toggle("d-none");
+        });
+    });
+
+    // AJAX Like & Dislike for Comments
+    document.querySelectorAll(".like-btn, .dislike-btn").forEach(button => {
+        button.addEventListener("click", function() {
+            let commentId = this.getAttribute("data-id");
+            let isLike = this.classList.contains("like-btn");
+            let url = `/Likes/comment-react/${commentId}/${isLike ? "like" : "dislike"}/`;
+
+            fetch(url, {
+                method: "POST",
+                headers: {
+                    "X-CSRFToken": "{{ csrf_token }}",
+                    "Content-Type": "application/json",
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById(`like-count-${commentId}`).innerText = data.likes_count;
+                document.getElementById(`dislike-count-${commentId}`).innerText = data.dislikes_count;
+
+                // Toggle active state
+                let likeBtn = document.querySelector(`.like-btn[data-id='${commentId}']`);
+                let dislikeBtn = document.querySelector(`.dislike-btn[data-id='${commentId}']`);
+
+                likeBtn.classList.remove("btn-primary");
+                dislikeBtn.classList.remove("btn-danger");
+
+                if (data.reaction === "like") {
+                    likeBtn.classList.add("btn-primary");
+                } else if (data.reaction === "dislike") {
+                    dislikeBtn.classList.add("btn-danger");
+                }
+            });
+        });
+    });
+
+    // AJAX Like & Dislike for Videos
+    document.querySelectorAll(".video-like-btn, .video-dislike-btn").forEach(button => {
+        button.addEventListener("click", function() {
+            let videoId = this.getAttribute("data-video-id");
+            let isLike = this.classList.contains("video-like-btn");
+            let url = `/Likes/video-react/${videoId}/${isLike ? "like" : "dislike"}/`;
+
+            fetch(url, {
+                method: "POST",
+                headers: {
+                    "X-CSRFToken": "{{ csrf_token }}",
+                    "Content-Type": "application/json",
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById("video-like-count").innerText = data.likes_count;
+                document.getElementById("video-dislike-count").innerText = data.dislikes_count;
+
+                // Toggle active state
+                let likeBtn = document.querySelector(".video-like-btn");
+                let dislikeBtn = document.querySelector(".video-dislike-btn");
+
+                likeBtn.classList.remove("btn-primary");
+                dislikeBtn.classList.remove("btn-danger");
+
+                if (data.reaction === "like") {
+                    likeBtn.classList.add("btn-primary");
+                } else if (data.reaction === "dislike") {
+                    dislikeBtn.classList.add("btn-danger");
+                }
+            });
         });
     });
 </script>

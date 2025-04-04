@@ -25,6 +25,8 @@ urlpatterns = [
     path('videos/', include('Video.urls')),
     path('comments/', include('Comments.urls')),
     path('search/', include('Search.urls')),
+    path('Likes/', include('Likes.urls')),
+    path('notifications/', include('Notifications.urls')), 
 ]
 
 if settings.DEBUG:

@@ -36,6 +36,7 @@ INSTALLED_APPS = [
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
+    'daphne',  # for ASGI support
     'django.contrib.staticfiles',
     'storages',
     'users',
@@ -48,6 +49,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'crispy_forms',
     'crispy_bootstrap4',  
+    'channels',
 ]
 
 MIDDLEWARE = [
@@ -155,3 +157,13 @@ CRISPY_TEMPLATE_PACK = 'bootstrap4'
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+# Configure ASGI application
+ASGI_APPLICATION = "VideoLibrary.asgi.application"
+
+# Set up the channel layer for WebSockets (using Redis)
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels.layers.InMemoryChannelLayer",  # Change to Redis in production
+    },
+}

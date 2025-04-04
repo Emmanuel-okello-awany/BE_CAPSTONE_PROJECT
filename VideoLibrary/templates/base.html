@@ -51,6 +51,9 @@
         {% block content %}{% endblock %}
     </main>
 
+    <!-- Notification Box (For WebSocket notifications) -->
+    <div id="notification-box" class="position-fixed top-0 end-0 p-3" style="z-index: 9999;"></div>
+
     <!-- 🌟 Footer -->
     <footer class="footer bg-dark text-white text-center py-3">
         <p>&copy; 2025 VideoLibrary. All rights reserved.</p>
@@ -61,5 +64,27 @@
 
     <!-- Custom JavaScript -->
     <script src="{% static 'js/script.js' %}"></script>
+
+    <!-- WebSocket Script for Notifications -->
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            let socket = new WebSocket("ws://" + window.location.host + "/ws/notifications/");
+
+            socket.onmessage = function (event) {
+                let data = JSON.parse(event.data);
+                let notificationBox = document.getElementById("notification-box");
+
+                let newNotification = document.createElement("div");
+                newNotification.classList.add("alert", "alert-info");
+                newNotification.innerHTML = `<strong>${data.content}</strong> <a href="${data.link}" class="btn btn-sm btn-primary">View</a>`;
+
+                notificationBox.prepend(newNotification);
+            };
+
+            socket.onclose = function () {
+                console.log("WebSocket Disconnected.");
+            };
+        });
+    </script>
 </body>
 </html>

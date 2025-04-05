@@ -25,7 +25,6 @@ def react_to_video(request, video_id, reaction_type):
     return JsonResponse({'reaction': reaction_type, 'likes_count': video.reaction_set.filter(reaction_type="like").count(), 'dislikes_count': video.reaction_set.filter(reaction_type="dislike").count()})
 
 
-
 @login_required
 def react_to_comment(request, comment_id, reaction_type):
     comment = get_object_or_404(Comment, id=comment_id)

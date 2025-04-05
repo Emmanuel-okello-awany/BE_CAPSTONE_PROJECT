@@ -37,7 +37,7 @@
                 {% for video in page_obj %}
                     <div class="col-md-4 mb-4">
                         <div class="video-card card shadow-sm">
-                            <a href="{{ video.get_absolute_url }}">
+                            <a href="{% url 'video_detail' video.id %}">
                                 <img src="{{ video.thumbnail.url }}" class="card-img-top video-thumbnail" alt="{{ video.title }}"
                                      onerror="this.onerror=null;this.src='{% static 'images/default-thumbnail.jpg' %}';">
                             </a>
@@ -45,7 +45,7 @@
                                 <h5 class="card-title">{{ video.title }}</h5>
                                 <p class="text-muted">{{ video.uploaded_at }}</p>
                                 <p>{{ video.description|truncatewords:15 }}</p>
-                                <a href="{{ video.get_absolute_url }}" class="btn btn-primary w-100">Watch Now</a>
+                                <a href="{% url 'video_detail' video.id %}" class="btn btn-primary w-100">Watch Now</a>
                             </div>
                         </div>
                     </div>

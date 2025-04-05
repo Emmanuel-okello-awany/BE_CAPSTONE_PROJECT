@@ -31,12 +31,8 @@ def video_detail(request, video_id):
 
 def watch_video(request, video_id):
     video = get_object_or_404(Video, id=video_id)
-    video.increment_views()  # Increase views count
     return render(request, "video/watch_video.html", {"video": video})
 
-from django.core.paginator import Paginator
-from django.shortcuts import render
-from .models import Video
 
 def browse_videos(request):
     """Display all uploaded videos in a grid format with pagination and category filtering."""

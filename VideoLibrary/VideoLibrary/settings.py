@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-#y^q0ebxxa&+e*2hru6x(#78bzq&g%o3(3rch1d2a_!@aat3!6
 
 DEBUG = False
 
-ALLOWED_HOSTS = ['VideoLibrary.onrender.com']
+ALLOWED_HOSTS = ['.onrender.com']
 
 
 # Application definition
